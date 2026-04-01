@@ -1,0 +1,44 @@
+# custom python directory
+env/
+
+# ignore dummy python files
+__pycache__
+.ipynb_checkpoints
+.DS_Store
+
+# ignore init files... only accept changes upon forcing
+__init__.py
+
+# ignore files put in the scratch, data directory
+scratch/*
+data/
+
+# ignore data files
+*.dat
+*.csv
+*.pkl
+*.p
+*.zip
+
+# ignore images
+*.png
+*.PNG
+*.jpeg
+*.JPEG
+*.jpg
+*.JPG
+*.svg
+*.SVG
+
+#ignore outputs - these are too large
+#outputs/*
+
+#also inputs and logs - these are auto-generated
+#inputs/*
+#logs/*
+
+# ignore pdfs
+*.pdf
+
+# ignore standard profiler outputs
+profiler_stats.txt

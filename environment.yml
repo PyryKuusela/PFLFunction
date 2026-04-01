@@ -1,0 +1,16 @@
+name: pflfunction
+channels:
+- conda-forge
+dependencies:
+  - python=3.12
+  - pytest
+  - python-flint
+  - numpy
+  - sympy
+  - requests
+  - pip
+  - pip:
+    - latex2sympy2
+    # Editable installation
+    - -e .
+  - jupyterlab

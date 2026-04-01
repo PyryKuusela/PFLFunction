@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pflfunction"
+version = "0.1.0"
+description = "A software package for computing L-functions of Calabi-Yau differential operators."
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Pyry Kuusela"},
+  {name = "Michael Lathwood"},
+  {name = "Miroslava Mosso Rojas"},
+  {name = "Michael Stepniczka"}
+]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "sympy",
+    "python-flint",
+    "latex2sympy2",
+    "requests"
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest"
+]
+
+[project.urls]
+Repository = "https://github.com/PyryKuusela/PFLFunction"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pflfunction"]
+
+[tool.hatch.build.targets.sdist]
+packages = ["src/pflfunction"]
