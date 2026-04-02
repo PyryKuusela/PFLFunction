@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: >- 
   If you use this software, please cite the arXiv paper below.
 title: >-
-  PFLFunction: A Software Package for Computing L-functions from Calabi-Yau Differential Operators
+  Solutions of Calabi-Yau Differential Operators as Truncated p-adic Series and Efficient Computation of Zeta Functions
 authors:
   - family-names: Kuusela
     given-names: Pyry
