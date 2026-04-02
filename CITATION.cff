@@ -18,7 +18,7 @@ authors:
 type: software
 identifiers:
   - type: other
-    value: 'arXiv:xxxxxxx'
+    value: 'arXiv:2604.01191'
     description: The ArXiv preprint of the paper
 repository-code: 'https://github.com/PyryKuusela/PFLFunction'
 license: GPL-3.0
