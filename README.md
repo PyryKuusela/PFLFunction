@@ -1,3 +1,5 @@
+The following package is based on the following work: [https://arxiv.org/abs/2604.01191](https://arxiv.org/abs/2604.01191)
+
 ## Usage
 Run the following commands in a terminal window to prepare the virtual environment.
 1. Clone the repo: `git clone https://github.com/PyryKuusela/PFLFunction.git`
