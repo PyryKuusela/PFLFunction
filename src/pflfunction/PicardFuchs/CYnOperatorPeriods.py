@@ -125,11 +125,11 @@ def rational_periods(L, k, max_n):
                     previous_ds.append([dk_dict_list[a][i + shift] for shift in shifts])
             previous_ds.append([dk_values[i + shift] for shift in shifts if shift < max_shift])
             # Evaluate d_b(i + 1) using the recurrence function and convert to Rational
-            result = recurrence_func(i, *previous_ds)
+            result = recurrence_func(frac(i), *previous_ds)
 
             # Check if result is finite and valid
             is_valid = (
-                isinstance(result, (int, float)) and math.isfinite(result)
+                isinstance(result, (int, float, frac)) and math.isfinite(result)
                 ) or (
                 isinstance(result, s.Basic) and result.is_finite
                 )
@@ -179,21 +179,21 @@ def padic_periods(L, k, max_n, p, acc):
         if b > 0:    
             initial_conditions = {0:0}
         # Initialize the dictionary to store d_b(n) values with the initial conditions
-        dk_values = {key: s.Rational(value) for key, value in initial_conditions.items()}
+        dk_values = {key: frac(value) for key, value in initial_conditions.items()}
         for i in range(1,max_shift):
-            dk_values[-i] = 0
+            dk_values[-i] = frac(0)
 
         # Obtain the recurrence relation for d_b(n) by taking b derivatives of the recurrence relation for L
         log_k_recurrence_relation = s.diff(recurrence_relation,n,b)
-        log_k_recurrence_relation = log_k_recurrence_relation.replace(c(w),d(0,w)).doit() 
-        for a in range(1,b+1):    
-            log_k_recurrence_relation = log_k_recurrence_relation.replace(s.Derivative(d(0,w),w,a),d(a,w)).doit() 
+        log_k_recurrence_relation = log_k_recurrence_relation.replace(c(w),d(0,w)).doit()
+        for a in range(1,b+1):
+            log_k_recurrence_relation = log_k_recurrence_relation.replace(s.Derivative(d(0,w),w,a),d(a,w)).doit()
 
 
         # Reorganize recurrence relation for solving d_b(n + max_shift)
         # Isolate d_b(n + max_shift) to express it in terms of lower values
         recurrence_solved = s.solve(log_k_recurrence_relation, d(b,n + max_shift))[0]
-        
+
         # Define the recurrence function by lambdifying n and each c(n + s_i),d_1(n + s_i),d_2(n + s_i),...,d_b(n + s_i) term
         shifted_ds = []
         if b > 0 :
@@ -203,13 +203,13 @@ def padic_periods(L, k, max_n, p, acc):
         shifted_ds.append([d(b,n + shift) for shift in shifts if shift < max_shift])
 
 
-        # num, den = s.fraction(recurrence_solved)
-        # num = s.factor(num)
-        # #den = s.factor(den)
-        # print(s.factor(num))
-        #recurrence_solved = num/den
+        # Split into numerator and denominator so each is a plain polynomial in n
+        # (only non-negative integer powers), avoiding precision loss from
+        # evaluating the combined ratio directly.
+        num_solved, den_solved = s.fraction(recurrence_solved)
 
-        recurrence_func = s.lambdify((n, *shifted_ds), recurrence_solved, 'sympy')
+        recurrence_func_num = s.lambdify((n, *shifted_ds), num_solved, 'sympy')
+        recurrence_func_den = s.lambdify((n, *shifted_ds), den_solved, 'sympy')
 
         # Iteratively compute d_b(i) with lambdified function
         for i in range(-max_shift+1,max_n):
@@ -222,7 +222,10 @@ def padic_periods(L, k, max_n, p, acc):
             previous_ds.append([dk_values[i + shift] for shift in shifts if shift < max_shift])
 
             # Evaluate d_b(i + 1) using the recurrence function and convert to Rational
-            result = recurrence_func(i, *previous_ds)
+            num_result = recurrence_func_num(i, *previous_ds)
+            den_result = recurrence_func_den(i, *previous_ds)
+
+            result = frac(num_result, den_result)
 
             # Check if result is finite
             is_valid = (
@@ -231,11 +234,8 @@ def padic_periods(L, k, max_n, p, acc):
                 isinstance(result, s.Basic) and result.is_finite
                 )
 
-            #is_valid = True
-            
             if is_valid:
-                dk_values[i + max_shift] = p_adic.rational_to_padic_round(frac(result),p,acc)   
-                #dk_values[i + max_shift] = p_adic.numden_to_padic_round(num_f(i, *previous_ds),den_f(i, *previous_ds),p,acc)   
+                dk_values[i + max_shift] = p_adic.rational_to_padic_round(frac(result),p,acc)
             else:
                 dk_values[i + max_shift] = frac(0)
         dk_dict_list.append(dk_values) 
