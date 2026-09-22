@@ -31,7 +31,7 @@ def array_to_poly(array,var):
 def get_data(operator_name):
     with open("input_data.txt","r") as infile:
         for line in infile:
-            if line.startswith(operator_name):
+            if line.split()[0] == operator_name:
                 operator_data_in = line.strip()
                 break
         else:
