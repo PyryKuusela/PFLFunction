@@ -4,18 +4,18 @@ import flint
 import numpy as np
 import math
 
-from pflfunction import multipoint_evaluation as mpe
-from pflfunction import W_matrix as Wm
+from . import multipoint_evaluation as mpe
+from . import W_matrix as Wm
 
 import os
 import sys
 
 
-from pflfunction.PicardFuchs import CYnOperatorPeriods 
-from pflfunction.PicardFuchs import EtildeOneParam
+from .PicardFuchs import CYnOperatorPeriods 
+from .PicardFuchs import EtildeOneParam
 
-from pflfunction.pAdic import rational_multiparameter_series as rs
-from pflfunction.pAdic import p_adic_utilities as p_utils
+from .pAdic import rational_multiparameter_series as rs
+from .pAdic import p_adic_utilities as p_utils
 
 
 #This class holds the "global" data of the computation
