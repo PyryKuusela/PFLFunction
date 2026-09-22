@@ -4,18 +4,18 @@ import flint
 import numpy as np
 import math
 
-from . import multipoint_evaluation as mpe
-from . import W_matrix as Wm
+from pflfunction import multipoint_evaluation as mpe
+from pflfunction import W_matrix as Wm
 
 import os
 import sys
 
 
-from .PicardFuchs import CYnOperatorPeriods 
-from .PicardFuchs import EtildeOneParam
+from pflfunction.PicardFuchs import CYnOperatorPeriods 
+from pflfunction.PicardFuchs import EtildeOneParam
 
-from .pAdic import rational_multiparameter_series as rs
-from .pAdic import p_adic_utilities as p_utils
+from pflfunction.pAdic import rational_multiparameter_series as rs
+from pflfunction.pAdic import p_adic_utilities as p_utils
 
 
 #This class holds the "global" data of the computation
@@ -99,7 +99,9 @@ def U_matrix(gamma,cd):
 def U_denominator(cd):
     z = sp.symbols('z')
     if(cd.pacc > len(cd.hodge_type)-1):
-            return (cd.conifold_locus).subs(z, z**cd.p)**(cd.pacc-len(cd.hodge_type))*(cd.other_sing_locus).subs(z, z**cd.p)**(cd.pacc-2)*(cd.apparent_sing_locus).subs(z, z**cd.p) 
+            #TODO: Should K-points come with a lower power. The other_sing_locus should really be the K-point locus. Apparent and other should be separated.
+            return (cd.conifold_locus).subs(z, z**cd.p)**(cd.pacc-len(cd.hodge_type))*(cd.other_sing_locus).subs(z, z**cd.p)*(cd.apparent_sing_locus).subs(z, z**cd.p)**(cd.pacc-2)
+            #return (cd.conifold_locus).subs(z, z**cd.p)**(cd.pacc-len(cd.hodge_type))*(cd.other_sing_locus).subs(z, z**cd.p)**(cd.pacc-2)*(cd.apparent_sing_locus).subs(z, z**cd.p)
     else:
         return 1
 
@@ -107,7 +109,9 @@ def U_numerator(gamma,cd):
         z = sp.symbols('z')
 
         #WARNING: I the denominator is computed as series to 10*p terms here. This will couse problems if the real degree is greater. 
-        denom_series = rs.fmpq_expand(U_denominator(cd),z, 0, 10*cd.p, cd.ctx)
+        denom_series = rs.fmpq_expand(U_denominator(cd),z, 0, 50*cd.p, cd.ctx)
+
+        #print((cd.conifold_locus).subs(z, z**cd.p)**(cd.pacc-len(cd.hodge_type))*(cd.other_sing_locus).subs(z, z**cd.p)*(cd.apparent_sing_locus).subs(z, z**cd.p)**(cd.pacc-2))
         
         denom_mat = np.diag([denom_series] * sum(cd.hodge_type)).astype(object)
 
@@ -141,9 +145,9 @@ def U_numerators_evaluated(gamma,cd,teich_coords_list):
     
 #Compute the coefficients of the polynomial R(T;X) from the traces of the U-matrix products.
 def R_poly_coeffs(tr_list,cd):
-    a_coeff = -tr_list[0]
+    a_coeff = flint.fmpq(-tr_list[0])
 
-    b_coeff = p_utils.rational_to_padic_round((tr_list[0]**2-tr_list[1])/flint.fmpq(2),cd.p,cd.pacc)
+    b_coeff = flint.fmpq(p_utils.rational_to_padic_round((tr_list[0]**2-tr_list[1])/flint.fmpq(2),cd.p,cd.pacc))
 
     if(not (a_coeff.denom() == 1 and b_coeff.denom() == 1)):
         raise Exception("Something went wrong - the Zeta function coefficient has non-trivial denominator in p.")
@@ -157,7 +161,7 @@ def compute_coefficient_list_new(cd):
 
     mod_ctx = flint.fmpz_mod_poly_ctx(cd.p**cd.pacc)
 
-    denom_series = rs.fmpq_expand(U_denominator(cd),z, 0, 10*cd.p, cd.ctx).monomial_power_mod(cd.p-1) 
+    denom_series = rs.fmpq_expand(U_denominator(cd),z, 0, 50*cd.p, cd.ctx).monomial_power_mod(cd.p-1) 
     denom = denom_series.to_fmpz_mod_poly(mod_ctx)
 
     teich_coords_list = [p_utils.teich(i,1,cd.p,cd.pacc + 1) for i in range(1, cd.p)]
