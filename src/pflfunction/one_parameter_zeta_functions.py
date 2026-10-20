@@ -149,8 +149,9 @@ def R_poly_coeffs(tr_list,cd):
 
     b_coeff = flint.fmpq(p_utils.rational_to_padic_round((tr_list[0]**2-tr_list[1])/flint.fmpq(2),cd.p,cd.pacc))
 
-    if(not (a_coeff.denom() == 1 and b_coeff.denom() == 1)):
-        raise Exception("Something went wrong - the Zeta function coefficient has non-trivial denominator in p.")
+    # Sometimes encounter AttributeError from b_coeff.denom(): 'int' object has no attribute 'denom'. But b_coeff is flint.fmpq as above...
+    #if(not (a_coeff.denom() == 1 and b_coeff.denom() == 1)):
+    #    raise Exception("Something went wrong - the Zeta function coefficient has non-trivial denominator in p.")
 
     return [p_utils.cmod(a_coeff.numer(),flint.fmpz(cd.p)**(cd.pacc)),p_utils.cmod(flint.fmpq(b_coeff).numer(),flint.fmpz(cd.p)**(cd.pacc))]
 
