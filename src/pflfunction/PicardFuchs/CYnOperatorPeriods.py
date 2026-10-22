@@ -228,15 +228,15 @@ def padic_periods(L, k, max_n, p, acc):
             result = frac(num_result, den_result)
 
             # Check if result is finite
-            is_valid = (
-                isinstance(result, (int, float, frac)) and math.isfinite(result)
-                ) or (
-                isinstance(result, s.Basic) and result.is_finite
-                )
+            #is_valid = (
+            #    isinstance(result, (int, float, frac)) and math.isfinite(result)
+            #    ) or (
+            #    isinstance(result, s.Basic) and result.is_finite
+            #    )
 
-            if is_valid:
-                dk_values[i + max_shift] = p_adic.rational_to_padic_round(frac(result),p,acc)
-            else:
-                dk_values[i + max_shift] = frac(0)
+            #if is_valid:
+            dk_values[i + max_shift] = p_adic.rational_to_padic_round(frac(result),p,acc)
+            #else:
+            #    dk_values[i + max_shift] = frac(0)
         dk_dict_list.append(dk_values) 
     return dk_dict_list
